@@ -172,7 +172,6 @@ def mine():
 
 
     response = { 
-      'message': 'Hello World',
       'valid': valid
     }
 
