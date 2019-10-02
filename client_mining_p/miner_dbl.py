@@ -16,9 +16,9 @@ def proof_of_work(block):
 
     block_string = json.dumps(block, sort_keys=True).encode()
 
-    proof = 0
+    proof = 1
     while valid_proof(block_string, proof) is False:
-        proof += 1
+        proof += 2
     
     return proof
 
