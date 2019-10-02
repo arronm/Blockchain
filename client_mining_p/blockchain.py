@@ -156,11 +156,11 @@ node_identifier = str(uuid4()).replace('-', '')
 blockchain = Blockchain()
 
 
-@app.route('/mine', methods=['GET'])
+@app.route('/mine', methods=['POST'])
 def mine():
     # We run the proof of work algorithm to get the next proof...
     # proof = blockchain.proof_of_work(blockchain.last_block)
-    proof = request.json.get('proof')
+    proof = request.values.get('proof')
     if proof is None:
       response = {
         "message": "Please provide a proof"
@@ -170,12 +170,34 @@ def mine():
     block_string = blockchain.block_string(blockchain.last_block)
     valid = blockchain.valid_proof(block_string, proof)
 
+    if valid is True:
+      blockchain.new_transaction(
+        sender = "0",
+        recipient=node_identifier,
+        amount=1
+      )
 
-    response = { 
-      'valid': valid
-    }
+      # Forge the new Block by adding it to the chain
+      # TODO
+      previous_hash = blockchain.hash(blockchain.last_block)
+      block = blockchain.new_block(proof, previous_hash)
 
-    return jsonify(response), 200
+      # Send a response with the new block
+      response = {
+          'message': "New Block Forged",
+          'index': block['index'],
+          'transactions': block['transactions'],
+          'proof': block['proof'],
+          'previous_hash': block['previous_hash'],
+      }
+      return jsonify(response), 200
+    else:
+      response = {
+        'message': 'Invalid proof',
+        'valid': valid
+      }
+
+      return jsonify(response), 200
 
 
 @app.route('/transactions/new', methods=['POST'])
