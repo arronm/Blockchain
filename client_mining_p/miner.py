@@ -40,7 +40,6 @@ def valid_proof(block_string, proof):
 
     return guess_hash[:6] == "000000"
 
-
 if __name__ == '__main__':
     # What node are we interacting with?
     if len(sys.argv) > 1:
@@ -49,8 +48,8 @@ if __name__ == '__main__':
         node = "http://localhost:5000"
 
     coins_mined = 0
-    # block_string = json.dumps(last_block, sort_keys=True).encode()
-    # proof = 0
+    proofs = 0
+    total_time = 0
 
     # Run forever until interrupted
     while True:
@@ -69,6 +68,11 @@ if __name__ == '__main__':
         # print the message from the server.
         if json.loads(response.content)['message'] == "New Block Forged":
             coins_mined += 1
-            print(f'Mined {coins_mined} coins, last proof took {end - start} seconds.')
+            proofs += 1
+            total_time += end - start
+            print(f'Mined {coins_mined} coins, last proof took {end - start} seconds. AVG: {total_time / proofs}')
         else:
+            proofs += 1
+            total_time += end - start
             print(json.loads(response.content)['message'])
+            print(f'Last, invalid, proof took {end - start} seconds. AVG: {total_time / proofs}')

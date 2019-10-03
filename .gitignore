@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+miner_*.py
 
 # C extensions
 *.so
